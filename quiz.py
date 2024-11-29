@@ -4,6 +4,8 @@ TITLE="Quiz Master"
 WIDTH=870
 HEIGHT=650
 
+questionfilename="questions.txt"
+
 marqueebox=Rect(0,0,870,80)
 questionbox=Rect(0,0,650,150)
 timerbox=Rect(0,0,150,150)
@@ -24,6 +26,22 @@ option1.move_ip(20,270)
 option2.move_ip(370,270)
 option3.move_ip(20,450)
 option4.move_ip(370,450)
+
+questions=[]
+questioncount=0
+
+questionindex=0
+
+def readquestion():
+    qfile=open(questionfilename, "r")
+    for question in qfile:
+        questions.append(question)
+        questioncount+=1
+    qfile.close()
+
+def nextquestion():
+    questionindex+=1
+    return questions.pop(0).split(",")
 
 def draw():
     screen.fill("black")

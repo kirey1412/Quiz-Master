@@ -4,7 +4,12 @@ TITLE="Quiz Master"
 WIDTH=870
 HEIGHT=650
 
-questionfilename="questions.txt"
+questionfilename="Quiz Master/questions.txt"
+
+score=0
+
+timeleft=10
+is_gameover=False
 
 marqueebox=Rect(0,0,870,80)
 questionbox=Rect(0,0,650,150)
@@ -33,6 +38,7 @@ questioncount=0
 questionindex=0
 
 def readquestion():
+    global questioncount, questions
     qfile=open(questionfilename, "r")
     for question in qfile:
         questions.append(question)
@@ -40,6 +46,7 @@ def readquestion():
     qfile.close()
 
 def nextquestion():
+    global questionindex, questions
     questionindex+=1
     return questions.pop(0).split(",")
 
@@ -53,14 +60,39 @@ def draw():
         screen.draw.filled_rect(option,"yellow")
     marquemessage="Welcome to the Quiz Master!"
     screen.draw.textbox(marquemessage,marqueebox,color="red",shadow=(0.5,0.5),scolor="dimgray")
+    screen.draw.textbox(a[0],questionbox,color="green",shadow=(0.5,0.5),scolor="dimgray")
+    index=1
+    for i in options:
+        screen.draw.textbox(a[index],i,color="pink",shadow=(0.5,0.5),scolor="dimgray")
+        index+=1
+    screen.draw.textbox("skip",skipbox,color="red",shadow=(0.5,0.5),scolor="dimgray",angle=90)
+    screen.draw.textbox(str(timeleft),timerbox,color="red",shadow=(0.5,0.5),scolor="dimgray")
+
+def update_time():
+    global timeleft
+    if timeleft:
+        timeleft-=1
+    else:
+        gameover()
+
+def gameover():
+    global a, timeleft, is_gameover
+    message=f"Game Over. You got {score} questions correct."
+    a=[message,"-","-","-","-"]
+    timeleft=0
+    is_gameover=True
 
 def movemarquee():
     marqueebox.x-=2
     if marqueebox.right<0:
         marqueebox.left=WIDTH
 
+readquestion()
+a=nextquestion()
 
 def update():
     movemarquee()
+
+clock.schedule_interval(update_time,1)
 
 pgzrun.go()
